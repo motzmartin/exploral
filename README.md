@@ -1,5 +1,5 @@
 # Description
-Exploral Map Preview, libs used are [SDL2](https://github.com/libsdl-org/SDL) and [FastNoiseLite](https://github.com/Auburn/FastNoiseLite).
+Exploral map preview, libs used are [SDL2](https://github.com/libsdl-org/SDL) and [FastNoiseLite](https://github.com/Auburn/FastNoiseLite).
 # Screenshots
 ![screenshot1](https://user-images.githubusercontent.com/94078957/197043820-246281be-082a-4d6c-a810-435459904510.png)
 ![screenshot2](https://user-images.githubusercontent.com/94078957/197043832-3b5e5c18-7dec-47e0-9cb7-a07c4510756f.png)
