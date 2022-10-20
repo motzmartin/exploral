@@ -22,8 +22,8 @@ private:
 	int width;
 	int height;
 
-	int screenWidth = 800;
-	int screenHeight = 600;
+	int screenWidth = 1280;
+	int screenHeight = 720;
 
 	SDL_Texture* textures = nullptr;
 

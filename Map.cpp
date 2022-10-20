@@ -1,7 +1,10 @@
 #include "Map.h"
 
-void Map::Generate(int width, int height)
+void Map::Generate(int width_, int height_)
 {
+	width = width_;
+	height = height_;
+
 	surfaceLayerVariations.SetSeed(0);
 
 	surfaceHoles.SetSeed(1);
@@ -68,4 +71,14 @@ Tile Map::Get(int x, int y)
 Tile Map::GetTile(int x, int y)
 {
 	return tiles[y][x];
+}
+
+int Map::GetWidth()
+{
+	return width;
+}
+
+int Map::GetHeight()
+{
+	return height;
 }

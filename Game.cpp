@@ -55,7 +55,9 @@ bool Game::Initialize()
 		height = screenHeight / 16 + 2;
 	}
 
-	map.Generate(525, 150);
+	map.Generate(10000, 1000);
+	mapX = (map.GetWidth() / 2 - width / 2) * 16;
+	mapY = 256;
 
 	SDL_Surface* surface = IMG_Load("Data/textures.png");
 	textures = SDL_CreateTextureFromSurface(renderer, surface);
@@ -104,18 +106,18 @@ bool Game::PollEvents()
 				{
 					mapX = 0;
 				}
-				if (mapX > (525 - width) * 16)
+				if (mapX > (map.GetWidth() - width) * 16)
 				{
-					mapX = (525 - width) * 16;
+					mapX = (map.GetWidth() - width) * 16;
 				}
 
 				if (mapY < 0)
 				{
 					mapY = 0;
 				}
-				if (mapY > 149 * 16 - screenHeight)
+				if (mapY > (map.GetHeight() - 1) * 16 - screenHeight)
 				{
-					mapY = 149 * 16 - screenHeight;
+					mapY = (map.GetHeight() - 1) * 16 - screenHeight;
 				}
 			}
 		}

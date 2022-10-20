@@ -20,8 +20,10 @@ struct Tile
 class Map
 {
 public:
-	void Generate(int width, int height);
+	void Generate(int width_, int height_);
 	Tile GetTile(int x, int y);
+	int GetWidth();
+	int GetHeight();
 
 private:
 	Tile Get(int x, int y);
@@ -32,4 +34,7 @@ private:
 	FastNoiseLite surfaceHoles;
 	FastNoiseLite surfaceWallHoles;
 	FastNoiseLite caves;
+
+	int width;
+	int height;
 };
