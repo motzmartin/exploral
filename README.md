@@ -12,7 +12,7 @@ Exploral map preview, libs used are [SDL2](https://github.com/libsdl-org/SDL) an
 - v1.1.1<br>
 \- Lights are now updated in real time
 - v1.1.2<br>
-\- World generation reworked<br>
+\- World generation reworked, like caves<br>
 \- Added "compact dirt"<br>
 \- Cursor now emits light<br>
 \- Some optimizations
