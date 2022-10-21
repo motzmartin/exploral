@@ -18,7 +18,7 @@ void Lights::Initialize(int w, int h)
 	}
 }
 
-void Lights::Generate(Map& map, int beginX, int beginY, bool night)
+void Lights::Generate(Map& map, int beginX, int beginY, int mouseX, int mouseY)
 {
 	for (int y = 0; y < height; y++)
 	{
@@ -26,9 +26,9 @@ void Lights::Generate(Map& map, int beginX, int beginY, bool night)
 		{
 			Tile tile = map.GetTile(beginX + x, beginY + y);
 
-			if (tile.block == Type::NONE && tile.wall == Type::NONE)
+			if ((x == mouseX && y == mouseY) || tile.block == Block::VOID && tile.wall == Wall::NONE)
 			{
-				lights[y][x] = night ? 0.5 : 1.0f;
+				lights[y][x] = 1.0f;
 			}
 			else
 			{
@@ -38,6 +38,7 @@ void Lights::Generate(Map& map, int beginX, int beginY, bool night)
 	}
 
 	bool stop = false;
+	bool firstIteration = true;
 
 	while (!stop)
 	{
@@ -51,7 +52,7 @@ void Lights::Generate(Map& map, int beginX, int beginY, bool night)
 			{
 				Tile tile = map.GetTile(beginX + x, beginY + y);
 
-				if (tile.block != Type::NONE || tile.wall != Type::NONE)
+				if (tile.block != Block::VOID || tile.wall != Wall::NONE)
 				{
 					float max = 0.0f;
 
@@ -76,13 +77,20 @@ void Lights::Generate(Map& map, int beginX, int beginY, bool night)
 					{
 						float finalIntensity;
 
-						if (tile.block != Type::NONE)
+						if (firstIteration)
 						{
-							finalIntensity = max - 0.15f;
+							finalIntensity = max;
 						}
 						else
 						{
-							finalIntensity = max - 0.05f;
+							if (tile.block != Block::VOID)
+							{
+								finalIntensity = max - 0.15f;
+							}
+							else
+							{
+								finalIntensity = max - 0.05f;
+							}
 						}
 
 						if (finalIntensity < 0.0f)
@@ -99,6 +107,11 @@ void Lights::Generate(Map& map, int beginX, int beginY, bool night)
 					}
 				}
 			}
+		}
+
+		if (firstIteration)
+		{
+			firstIteration = false;
 		}
 	}
 }

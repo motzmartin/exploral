@@ -19,22 +19,20 @@ private:
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 
+	SDL_Texture* textures = nullptr;
+
 	int width;
 	int height;
 
 	int screenWidth = 1280;
 	int screenHeight = 720;
 
-	SDL_Texture* textures = nullptr;
-
 	int mapX = 0;
 	int mapY = 0;
 
 	bool mouseDown = false;
-
-	bool night = false;
+	bool enableLightsUpdate = true;
 
 	Map map;
-
 	Lights lights;
 };

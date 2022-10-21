@@ -5,16 +5,16 @@ void Map::Generate(int width_, int height_)
 	width = width_;
 	height = height_;
 
-	surfaceLayerVariations.SetSeed(0);
+	std::random_device dev;
+	std::mt19937 rng(dev());
 
-	surfaceHoles.SetSeed(1);
-	surfaceHoles.SetFrequency(0.02f);
+	surface.SetSeed(rng());
 
-	surfaceHoles.SetSeed(2);
-	surfaceWallHoles.SetFrequency(0.05f);
+	caves.SetSeed(rng());
+	caves.SetFractalType(FastNoiseLite::FractalType_Ridged);
+	caves.SetFractalOctaves(1);
 
-	caves.SetSeed(3);
-	caves.SetFrequency(0.02f);
+	stone.SetSeed(rng());
 
 	for (int y = 0; y < height; y++)
 	{
@@ -30,14 +30,22 @@ void Map::Generate(int width_, int height_)
 	{
 		for (int x = 0; x < width; x++)
 		{
-			if (tiles[y][x].block == Type::DIRT)
+			if (tiles[y][x].block == Block::DIRT)
 			{
-				if ((x > 0 && tiles[y][x - 1].block == Type::NONE && tiles[y][x - 1].wall == Type::NONE) ||
-					(y > 0 && tiles[y - 1][x].block == Type::NONE && tiles[y - 1][x].wall == Type::NONE) ||
-					(x < width - 1 && tiles[y][x + 1].block == Type::NONE && tiles[y][x + 1].wall == Type::NONE) ||
-					(y < height - 1 && tiles[y + 1][x].block == Type::NONE && tiles[y + 1][x].wall == Type::NONE))
+				if (y > 0 && tiles[y - 1][x].block == Block::VOID && tiles[y - 1][x].wall == Wall::NONE)
 				{
-					tiles[y][x].block = Type::GRASS;
+					tiles[y][x].block = Block::GRASS;
+				}
+				else if (y < height - 1 && tiles[y + 1][x].block == Block::VOID)
+				{
+					tiles[y][x].block = Block::COMPACT_DIRT;
+				}
+			}
+			else if (tiles[y][x].block == Block::VOID && tiles[y][x].wall == Wall::DIRT)
+			{
+				if (y > 0 && tiles[y - 1][x].block == Block::COMPACT_DIRT)
+				{
+					tiles[y][x].wall = Wall::COMPACT_DIRT;
 				}
 			}
 		}
@@ -46,26 +54,33 @@ void Map::Generate(int width_, int height_)
 
 Tile Map::Get(int x, int y)
 {
-	if (y > 50 + surfaceLayerVariations.GetNoise((float)x, 0.0f) * 10)
+	float noiseX = (float)x;
+	float noiseY = (float)y;
+
+	if (y - 250.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
 	{
-		if (caves.GetNoise((float)x, (float)y) + (y / (float)400) * 2 - 1.0f > 0.0f)
+		return { Block::STONE, Wall::STONE };
+	}
+	else if (y - 50.0f > surface.GetNoise(noiseX, 0.0f) * 10.0f)
+	{
+		if (caves.GetNoise(noiseX, noiseY) > 0.5f)
 		{
-			return { Type::STONE, Type::STONE };
-		}
-		else if (surfaceHoles.GetNoise((float)x, (float)y) > 0.5f)
-		{
-			if (surfaceWallHoles.GetNoise((float)x, (float)y) < 0.8f)
+			if (y - 230.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
 			{
-				return { Type::NONE, Type::DIRT };
+				return { Block::VOID, Wall::STONE };
+			}
+			else
+			{
+				return { Block::VOID, Wall::DIRT };
 			}
 		}
 		else
 		{
-			return { Type::DIRT, Type::DIRT };
+			return { Block::DIRT, Wall::DIRT };
 		}
 	}
 
-	return { Type::NONE, Type::NONE };
+	return { Block::VOID, Wall::NONE };
 }
 
 Tile Map::GetTile(int x, int y)

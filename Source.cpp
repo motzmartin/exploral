@@ -8,16 +8,18 @@ int SDL_main(int argc, char* argv[])
 {
 	Game game;
 
-	if (game.Initialize())
+	if (!game.Initialize())
 	{
-		while (game.PollEvents())
-		{
-			game.Update();
-			game.RenderFrame();
-		}
-
-		game.Destroy();
+		return 1;
 	}
+
+	while (game.PollEvents())
+	{
+		game.Update();
+		game.RenderFrame();
+	}
+
+	game.Destroy();
 
 	return 0;
 }

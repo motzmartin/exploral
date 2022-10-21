@@ -2,19 +2,30 @@
 
 #include <vector>
 #include <FastNoiseLite.h>
+#include <random>
 
-enum class Type
+enum class Block
+{
+	VOID,
+	GRASS,
+	DIRT,
+	COMPACT_DIRT,
+	STONE
+};
+
+enum class Wall
 {
 	NONE,
 	GRASS,
 	DIRT,
+	COMPACT_DIRT,
 	STONE
 };
 
 struct Tile
 {
-	Type block;
-	Type wall;
+	Block block;
+	Wall wall;
 };
 
 class Map
@@ -30,10 +41,9 @@ private:
 
 	std::vector<std::vector<Tile>> tiles;
 
-	FastNoiseLite surfaceLayerVariations;
-	FastNoiseLite surfaceHoles;
-	FastNoiseLite surfaceWallHoles;
+	FastNoiseLite surface;
 	FastNoiseLite caves;
+	FastNoiseLite stone;
 
 	int width;
 	int height;

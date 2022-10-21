@@ -21,14 +21,14 @@ bool Game::Initialize()
 		SDL_WINDOWPOS_UNDEFINED,
 		screenWidth,
 		screenHeight,
-		SDL_WINDOW_SHOWN);
+		0);
 
 	if (window == nullptr)
 	{
 		return false;
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	renderer = SDL_CreateRenderer(window, -1, 0);
 
 	if (renderer == nullptr)
 	{
@@ -36,6 +36,14 @@ bool Game::Initialize()
 	}
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	SDL_Surface* surface = IMG_Load("./Data/Textures.png");
+	if (surface == nullptr)
+	{
+		return false;
+	}
+	textures = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
 
 	if (screenWidth % 16 == 0)
 	{
@@ -55,13 +63,9 @@ bool Game::Initialize()
 		height = screenHeight / 16 + 2;
 	}
 
-	map.Generate(10000, 1000);
+	map.Generate(3000, 300);
 	mapX = (map.GetWidth() / 2 - width / 2) * 16;
 	mapY = 256;
-
-	SDL_Surface* surface = IMG_Load("Data/textures.png");
-	textures = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
 
 	lights.Initialize(width, height);
 
@@ -79,9 +83,9 @@ bool Game::PollEvents()
 		case SDL_QUIT:
 			return false;
 		case SDL_KEYDOWN:
-			if (sdlEvent.key.keysym.sym == SDLK_n)
+			if (sdlEvent.key.keysym.sym == SDLK_l)
 			{
-				night = !night;
+				enableLightsUpdate = !enableLightsUpdate;
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
@@ -132,66 +136,81 @@ void Game::Update()
 
 void Game::RenderFrame()
 {
-	if (night)
-	{
-		SDL_SetRenderDrawColor(renderer, 12, 58, 97, 255);
-	}
-	else
-	{
-		SDL_SetRenderDrawColor(renderer, 97, 143, 182, 255);
-	}
+	SDL_SetRenderDrawColor(renderer, 97, 143, 182, 255);
 	SDL_RenderClear(renderer);
 
 	int beginX = mapX / 16;
 	int beginY = mapY / 16;
 
-	lights.Generate(map, beginX, beginY, night);
+	int mouseX;
+	int mouseY;
+	SDL_GetMouseState(&mouseX, &mouseY);
+	mouseX = (mouseX + mapX % 16) / 16;
+	mouseY = (mouseY + mapY % 16) / 16;
+
+	if (enableLightsUpdate)
+	{
+		lights.Generate(map, beginX, beginY, mouseX, mouseY);
+	}
 
 	for (int y = 0; y < height; y++)
 	{
 		for (int x = 0; x < width; x++)
 		{
 			SDL_Rect dstRect = { x * 16 - mapX % 16, y * 16 - mapY % 16, 16, 16 };
+			float lightIntensity = lights.GetIntensity(x, y);
 
-			if (lights.GetIntensity(x, y) > 0.0f)
+			if (lightIntensity > 0.0f)
 			{
 				Tile tile = map.GetTile(beginX + x, beginY + y);
 
-				if (tile.block != Type::NONE || tile.wall != Type::NONE)
+				if (tile.block != Block::VOID || tile.wall != Wall::NONE)
 				{
 					int spriteX = 0;
 					int spriteY = 0;
 
-					Type Type;
-
-					if (tile.block != Type::NONE)
+					if (tile.block != Block::VOID)
 					{
-						Type = tile.block;
 						spriteY = 0;
+						switch (tile.block)
+						{
+						case Block::GRASS:
+							spriteX = 0;
+							break;
+						case Block::DIRT:
+							spriteX = 1;
+							break;
+						case Block::COMPACT_DIRT:
+							spriteX = 2;
+							break;
+						case Block::STONE:
+							spriteX = 3;
+						}
 					}
-					else if (tile.wall != Type::NONE)
+					else if (tile.wall != Wall::NONE)
 					{
-						Type = tile.wall;
 						spriteY = 1;
-					}
-
-					switch (Type)
-					{
-					case Type::DIRT:
-						spriteX = 1;
-						break;
-					case Type::GRASS:
-						spriteX = 0;
-						break;
-					case Type::STONE:
-						spriteX = 2;
+						switch (tile.wall)
+						{
+						case Wall::GRASS:
+							spriteX = 0;
+							break;
+						case Wall::DIRT:
+							spriteX = 1;
+							break;
+						case Wall::COMPACT_DIRT:
+							spriteX = 2;
+							break;
+						case Wall::STONE:
+							spriteX = 3;
+						}
 					}
 
 					SDL_Rect srcRect = { spriteX * 4, spriteY * 4, 4, 4 };
 					SDL_RenderCopy(renderer, textures, &srcRect, &dstRect);
 				}
-				
-				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 * (1.0f - lights.GetIntensity(x, y)));
+
+				SDL_SetRenderDrawColor(renderer, 0, 0, 0, (Uint8)(255 * (1.0f - lightIntensity)));
 				SDL_RenderFillRect(renderer, &dstRect);
 			}
 			else
@@ -207,8 +226,8 @@ void Game::RenderFrame()
 
 void Game::Destroy()
 {
-	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 
 	IMG_Quit();
 	SDL_Quit();
