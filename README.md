@@ -4,9 +4,9 @@ Exploral map preview, libs used are [SDL2](https://github.com/libsdl-org/SDL) an
 - v1.0.0<br>
 \- First release
 - v1.1.0<br>
-\- The world is generated with Simplex noise<br>
+\- The world is now generated with Simplex noise<br>
 \- We can't see beyond world borders anymore<br>
-\- Transition from SFML to SDL2<br>
+\- Transition from SFML to SDL2 lib<br>
 \- Some optimizations<br>
 \- Added "stone"
 - v1.1.1<br>
