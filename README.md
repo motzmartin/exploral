@@ -17,6 +17,5 @@ Exploral map preview, libs used are [SDL2](https://github.com/libsdl-org/SDL) an
 - v1.0.0  
 \- First release
 # Screenshots
-![screenshot1](https://user-images.githubusercontent.com/94078957/197043820-246281be-082a-4d6c-a810-435459904510.png)
-![screenshot2](https://user-images.githubusercontent.com/94078957/197043832-3b5e5c18-7dec-47e0-9cb7-a07c4510756f.png)
-![screenshot3](https://user-images.githubusercontent.com/94078957/197043892-5058e9d4-f972-458f-9133-437eba6de64e.png)
+![screenshot1](https://user-images.githubusercontent.com/94078957/197405697-080e8d8d-5b47-4466-bd62-90226de41d00.png)
+![screenshot2](https://user-images.githubusercontent.com/94078957/197405698-4b32450e-b4e2-4316-8cbc-f8af25997de1.png)
