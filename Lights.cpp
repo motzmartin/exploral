@@ -26,7 +26,7 @@ void Lights::Generate(Map& map, int beginX, int beginY, int mouseX, int mouseY)
 		{
 			Tile tile = map.GetTile(beginX + x, beginY + y);
 
-			if ((x == mouseX && y == mouseY) || tile.block == Block::VOID && tile.wall == Wall::NONE)
+			if (x == mouseX && y == mouseY || tile.block == Block::VOID && tile.wall == Wall::NONE)
 			{
 				lights[y][x] = 1.0f;
 			}
