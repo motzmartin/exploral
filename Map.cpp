@@ -1,9 +1,9 @@
 #include "Map.h"
 
-void Map::Generate(int width_, int height_)
+void Map::Generate(int w, int h)
 {
-	width = width_;
-	height = height_;
+	width = w;
+	height = h;
 
 	std::random_device dev;
 	std::mt19937 rng(dev());

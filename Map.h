@@ -31,7 +31,7 @@ struct Tile
 class Map
 {
 public:
-	void Generate(int width_, int height_);
+	void Generate(int w, int h);
 	Tile GetTile(int x, int y);
 	int GetWidth();
 	int GetHeight();
