@@ -51,7 +51,7 @@ Tile Map::Get(int x, int y)
 	float noiseX = (float)x;
 	float noiseY = (float)y;
 
-	if (false && y - 250.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
+	if (y - 250.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
 	{
 		return { Block::STONE, Wall::STONE };
 	}
@@ -59,7 +59,7 @@ Tile Map::Get(int x, int y)
 	{
 		if (caves.GetNoise(noiseX, noiseY) > 0.5f)
 		{
-			if (false && y - 230.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
+			if (y - 230.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
 			{
 				return { Block::VOID, Wall::STONE };
 			}
