@@ -39,13 +39,7 @@ void Map::Generate(int w, int h)
 				else if (y < height - 1 && tiles[y + 1][x].block == Block::VOID)
 				{
 					tiles[y][x].block = Block::COMPACT_DIRT;
-				}
-			}
-			else if (tiles[y][x].block == Block::VOID && tiles[y][x].wall == Wall::DIRT)
-			{
-				if (y > 0 && tiles[y - 1][x].block == Block::COMPACT_DIRT)
-				{
-					tiles[y][x].wall = Wall::COMPACT_DIRT;
+					tiles[y + 1][x].wall = Wall::COMPACT_DIRT;
 				}
 			}
 		}
@@ -57,7 +51,7 @@ Tile Map::Get(int x, int y)
 	float noiseX = (float)x;
 	float noiseY = (float)y;
 
-	if (y - 250.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
+	if (false && y - 250.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
 	{
 		return { Block::STONE, Wall::STONE };
 	}
@@ -65,7 +59,7 @@ Tile Map::Get(int x, int y)
 	{
 		if (caves.GetNoise(noiseX, noiseY) > 0.5f)
 		{
-			if (y - 230.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
+			if (false && y - 230.0f > stone.GetNoise(noiseX, 0.0f) * 20.0f)
 			{
 				return { Block::VOID, Wall::STONE };
 			}
