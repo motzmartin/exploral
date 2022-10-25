@@ -1,6 +1,10 @@
 # Description
 Exploral map preview, libs used are [SDL2](https://github.com/libsdl-org/SDL) and [FastNoiseLite](https://github.com/Auburn/FastNoiseLite).
 # Changelog
+- v1.1.3  
+\- Map and lights now use 2D arrays instead of 2D vectors (faster rendering)  
+\- You can press right click to break blocks  
+\- Some optimizations
 - v1.1.2  
 \- World generation reworked, like caves  
 \- Added "compact dirt"  
