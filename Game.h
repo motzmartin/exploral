@@ -30,8 +30,10 @@ private:
 	int mapX = 0;
 	int mapY = 0;
 
-	bool mouseDown = false;
+	bool mouseLeftDown = false;
+	bool mouseRightDown = false;
 	bool enableLightsUpdate = true;
+	bool fullscreen = false;
 
 	Map map;
 	Lights lights;

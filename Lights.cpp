@@ -5,16 +5,11 @@ void Lights::Initialize(int w, int h)
 	width = w;
 	height = h;
 
-	std::vector<float> line;
+	lights = new float* [h]();
 
-	for (int i = 0; i < width; i++)
+	for (int i = 0; i < h; i++)
 	{
-		line.push_back(0.0f);
-	}
-
-	for (int i = 0; i < height; i++)
-	{
-		lights.push_back(line);
+		lights[i] = new float[w]();
 	}
 }
 
@@ -24,9 +19,14 @@ void Lights::Generate(Map& map, int beginX, int beginY, int mouseX, int mouseY)
 	{
 		for (int x = 0; x < width; x++)
 		{
-			Tile tile = map.GetTile(beginX + x, beginY + y);
+			int mapX = beginX + x;
+			int mapY = beginY + y;
 
-			if (x == mouseX && y == mouseY || tile.block == Block::VOID && tile.wall == Wall::NONE)
+			if ((x == mouseX && y == mouseY || map.IsEmpty(mapX, mapY)) ||
+				((x > 0 && map.IsEmpty(mapX - 1, mapY)) ||
+				(y > 0 && map.IsEmpty(mapX, mapY - 1)) ||
+				(x < map.GetWidth() - 1 && map.IsEmpty(mapX + 1, mapY)) ||
+				(y < map.GetHeight() - 1 && map.IsEmpty(mapX, mapY + 1))))
 			{
 				lights[y][x] = 1.0f;
 			}
@@ -38,19 +38,26 @@ void Lights::Generate(Map& map, int beginX, int beginY, int mouseX, int mouseY)
 	}
 
 	bool stop = false;
-	bool firstIteration = true;
 
 	while (!stop)
 	{
 		stop = true;
 
-		std::vector<std::vector<float>> temp = lights;
+		float** temp = new float* [height]();
+		for (int i = 0; i < height; i++)
+		{
+			temp[i] = new float[width]();
+			for (int j = 0; j < width; j++)
+			{
+				temp[i][j] = lights[i][j];
+			}
+		}
 
 		for (int y = 0; y < height; y++)
 		{
 			for (int x = 0; x < width; x++)
 			{
-				Tile tile = map.GetTile(beginX + x, beginY + y);
+				Tile tile = map.Get(beginX + x, beginY + y);
 
 				if (tile.block != Block::VOID || tile.wall != Wall::NONE)
 				{
@@ -77,20 +84,13 @@ void Lights::Generate(Map& map, int beginX, int beginY, int mouseX, int mouseY)
 					{
 						float finalIntensity;
 
-						if (firstIteration)
+						if (tile.block != Block::VOID)
 						{
-							finalIntensity = max;
+							finalIntensity = max - 0.15f;
 						}
 						else
 						{
-							if (tile.block != Block::VOID)
-							{
-								finalIntensity = max - 0.15f;
-							}
-							else
-							{
-								finalIntensity = max - 0.05f;
-							}
+							finalIntensity = max - 0.05f;
 						}
 
 						if (finalIntensity < 0.0f)
@@ -109,14 +109,25 @@ void Lights::Generate(Map& map, int beginX, int beginY, int mouseX, int mouseY)
 			}
 		}
 
-		if (firstIteration)
+		for (int i = 0; i < height; i++)
 		{
-			firstIteration = false;
+			delete[] temp[i];
 		}
+		delete[] temp;
 	}
 }
 
 float Lights::GetIntensity(int x, int y)
 {
 	return lights[y][x];
+}
+
+void Lights::Destroy()
+{
+	for (int i = 0; i < height; i++)
+	{
+		delete[] lights[i];
+	}
+
+	delete[] lights;
 }

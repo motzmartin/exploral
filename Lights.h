@@ -8,9 +8,10 @@ public:
 	void Initialize(int w, int h);
 	void Generate(Map& map, int beginX, int beginY, int mouseX, int mouseY);
 	float GetIntensity(int x, int y);
+	void Destroy();
 
 private:
-	std::vector<std::vector<float>> lights;
+	float** lights;
 
 	int width;
 	int height;

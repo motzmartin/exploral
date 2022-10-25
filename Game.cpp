@@ -21,7 +21,7 @@ bool Game::Initialize()
 		SDL_WINDOWPOS_UNDEFINED,
 		screenWidth,
 		screenHeight,
-		0);
+		fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 
 	if (window == nullptr)
 	{
@@ -63,7 +63,8 @@ bool Game::Initialize()
 		height = screenHeight / 16 + 2;
 	}
 
-	map.Generate(3000, 300);
+	map.Initialize(3000, 300);
+	map.Generate();
 	mapX = (map.GetWidth() / 2 - width / 2) * 16;
 	mapY = 256;
 
@@ -91,17 +92,25 @@ bool Game::PollEvents()
 		case SDL_MOUSEBUTTONDOWN:
 			if (sdlEvent.button.button == SDL_BUTTON_LEFT)
 			{
-				mouseDown = true;
+				mouseLeftDown = true;
+			}
+			else if (sdlEvent.button.button == SDL_BUTTON_RIGHT)
+			{
+				mouseRightDown = true;
 			}
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (sdlEvent.button.button == SDL_BUTTON_LEFT)
 			{
-				mouseDown = false;
+				mouseLeftDown = false;
+			}
+			else if (sdlEvent.button.button == SDL_BUTTON_RIGHT)
+			{
+				mouseRightDown = false;
 			}
 			break;
 		case SDL_MOUSEMOTION:
-			if (mouseDown)
+			if (mouseLeftDown)
 			{
 				mapX -= sdlEvent.motion.xrel;
 				mapY -= sdlEvent.motion.yrel;
@@ -148,6 +157,11 @@ void Game::RenderFrame()
 	mouseX = (mouseX + mapX % 16) / 16;
 	mouseY = (mouseY + mapY % 16) / 16;
 
+	if (mouseRightDown)
+	{
+		map.Set(beginX + mouseX, beginY + mouseY, Block::VOID, Wall::NONE);
+	}
+
 	if (enableLightsUpdate)
 	{
 		lights.Generate(map, beginX, beginY, mouseX, mouseY);
@@ -162,7 +176,7 @@ void Game::RenderFrame()
 
 			if (lightIntensity > 0.0f)
 			{
-				Tile tile = map.GetTile(beginX + x, beginY + y);
+				Tile tile = map.Get(beginX + x, beginY + y);
 
 				if (tile.block != Block::VOID || tile.wall != Wall::NONE)
 				{
@@ -226,6 +240,9 @@ void Game::RenderFrame()
 
 void Game::Destroy()
 {
+	lights.Destroy();
+	map.Destroy();
+
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 

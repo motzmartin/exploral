@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <FastNoiseLite.h>
 #include <random>
 
@@ -31,15 +30,19 @@ struct Tile
 class Map
 {
 public:
-	void Generate(int w, int h);
-	Tile GetTile(int x, int y);
+	void Initialize(int w, int h);
+	void Generate();
+	Tile Get(int x, int y);
+	bool IsEmpty(int x, int y);
+	void Set(int x, int y, Block block, Wall wall);
 	int GetWidth();
 	int GetHeight();
+	void Destroy();
 
 private:
-	Tile Get(int x, int y);
+	Tile GenByCoords(int x, int y);
 
-	std::vector<std::vector<Tile>> tiles;
+	Tile** tiles;
 
 	FastNoiseLite surface;
 	FastNoiseLite caves;
